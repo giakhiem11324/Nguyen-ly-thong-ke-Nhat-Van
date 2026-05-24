@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Bài Tập Thống Kê Chi Tiết Toàn Tập</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        p { margin: 0; margin-bottom: 12px; line-height: 1.6; font-size: 17px;}
+
+        /* NỀN CỰC SÁNG - Trắng tinh khôi kết hợp sọc caro mờ như giấy ô ly */
+        body {
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(90deg, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+                linear-gradient(rgba(203, 213, 225, 0.35) 1px, transparent 1px);
+            background-size: 30px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            margin: 0;
+            padding: 50px 20px;
+            align-items: center;
+            font-family: 'Nunito', sans-serif;
+            color: #1e293b;
+        }
+
+        /* CONTAINER NỀN TRẮNG SÁNG, BO GÓC TRÒN TRỊA, ĐỔ BÓNG NỔI BẬT */
+        .slide-container {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1400px;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3 { font-family: 'Quicksand', sans-serif; margin: 0; }
+        
+        .section-header {
+            font-size: 40px;
+            font-weight: 800;
+            color: #1e3a8a;
+            text-align: center;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #e0e7ff;
+            background: #ffffff;
+            padding: 20px 50px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+            border: 2px solid #bfdbfe;
+        }
+
+        .slide-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 3px dashed #cbd5e1;
+            padding-bottom: 15px;
+        }
+
+        .slide-title span {
+            background: #dbeafe;
+            color: #2563eb;
+            padding: 6px 18px;
+            border-radius: 12px;
+            font-size: 22px;
+        }
+
+        /* TILE (THẺ CÁC BƯỚC) */
+        .tiled-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .tile {
+            background-color: #f8fafc;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 300px;
+            padding: 30px 25px;
+            text-align: left;
+            position: relative;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tile:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); background-color: #ffffff; }
+
+        .tile:nth-child(1) { border-top: 8px solid #3b82f6; }
+        .tile:nth-child(2) { border-top: 8px solid #f59e0b; }
+        .tile:nth-child(3) { border-top: 8px solid #10b981; }
+        .tile:nth-child(4) { border-top: 8px solid #ec4899; }
+        .tile:nth-child(5) { border-top: 8px solid #8b5cf6; }
+
+        .tile .icon {
+            font-size: 36px;
+            margin-bottom: 20px;
+            align-self: center;
+        }
+        
+        .tile:nth-child(1) .icon { color: #3b82f6; }
+        .tile:nth-child(2) .icon { color: #f59e0b; }
+        .tile:nth-child(3) .icon { color: #10b981; }
+        .tile:nth-child(4) .icon { color: #ec4899; }
+        .tile:nth-child(5) .icon { color: #8b5cf6; }
+
+        .tile h3 {
+            align-self: center;
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-weight: 800;
+            text-align: center;
+            background: #e2e8f0;
+            padding: 5px 20px;
+            border-radius: 20px;
+        }
+
+        /* HIGHLIGHT RỰC RỠ SÁNG SỦA */
+        .highlight-yellow { background-color: #fef08a; color: #92400e; padding: 4px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; }
+        .highlight-blue { background-color: #bfdbfe; color: #1e40af; padding: 4px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; }
+        .highlight-green { background-color: #bbf7d0; color: #166534; padding: 4px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; }
+        .highlight-red { background-color: #fecdd3; color: #9f1239; padding: 4px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; }
+
+        .result-box {
+            margin-top: auto;
+            text-align: center;
+            font-size: 22px;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 800;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* BẢNG TÍNH TOÁN CHI TIẾT - LỚN VÀ RÕ RÀNG NHẤT */
+        .table-wrapper {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border: 2px solid #cbd5e1;
+            margin-bottom: 35px;
+        }
+        table.main-table { width: 100%; border-collapse: collapse; }
+        table.main-table th, table.main-table td {
+            padding: 18px 20px;
+            text-align: center;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 18px;
+            color: #1e293b;
+        }
+        table.main-table th { background-color: #e0e7ff; font-weight: 800; color: #312e81; font-size: 19px; }
+        table.main-table tr:nth-child(even) { background-color: #f8fafc; }
+        table.main-table tr:hover { background-color: #f1f5f9; }
+        table.main-table tr.total-row { background-color: #fef3c7; font-weight: 800; color: #92400e; font-size: 20px;}
+
+        /* BẢNG TÓM TẮT TRONG TILE HOẶC ĐỀ BÀI */
+        table.summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 2px solid #e2e8f0; }
+        table.summary-table th, table.summary-table td { padding: 14px 15px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 17px;}
+        table.summary-table th { background-color: #f1f5f9; color: #0f172a; width: 50%; font-weight: 800; border-right: 1px solid #e2e8f0;}
+        table.summary-table td { background-color: #ffffff; color: #1e293b; font-weight: 700;}
+
+        .problem-desc {
+            font-size: 22px;
+            color: #0f172a;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: #ffffff;
+            padding: 30px;
+            border-left: 8px solid #4f46e5;
+            border-radius: 0 16px 16px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            line-height: 1.6;
+        }
+
+        .instruction-text {
+            font-size: 19px;
+            color: #b91c1c;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fee2e2;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.1);
+            border: 2px solid #fca5a5;
+        }
+        .instruction-text i { font-size: 28px; }
+        
+        .formula-box {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 15px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TIÊU ĐỀ CHÍNH -->
+    <div style="text-align: center; color: #0f172a; margin-bottom: -10px; background: white; padding: 30px 50px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #e2e8f0;">
+        <h1 style="font-size: 52px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px;">Giải Bài Tập Thống Kê Tuyệt Đối Chi Tiết</h1>
+        <p style="font-size: 24px; font-weight: 700; color: #4338ca;">Kẻ Bảng Rõ Ràng - Giải Thích Từng Bước - Không Dùng Bất Kỳ Từ Viết Tắt Nào</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CHƯƠNG 4: ƯỚC LƯỢNG THÔNG SỐ -->
+    <!-- ========================================== -->
+    <div class="section-header">Chương 4: Ước Lượng Thông Số</div>
+
+    <!-- CHƯƠNG 4 - BÀI 1 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 4</span> Bài 1: Ước Lượng 1 Bên (Lượng Điện Tiêu Thụ Tối Thiểu)</h2>
+        <p class="problem-desc">"Để theo dõi việc sử dụng điện trong tháng 6, cơ quan thống kê lấy một mẫu ngẫu nhiên gồm 100 hộ gia đình thì thấy lượng điện tiêu thụ trung bình là 150 Ki-lô-oát (KW), phương sai tổng thể là 144. Với độ tin cậy 90%, trung bình một hộ gia đình sử dụng <b>ít nhất</b> bao nhiêu KW điện?"</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-triangle-exclamation"></i> LƯU Ý QUAN TRỌNG: Bài toán này đã cho sẵn toàn bộ các số liệu tổng hợp (Kích thước mẫu, Trung bình cộng, Phương sai). Do đó, chúng ta KHÔNG CẦN lập bảng tính toán phân tổ như các bài khác. Dưới đây là Bảng Tóm Tắt Dữ Liệu bắt buộc phải ghi vào bài làm.</p>
+
+        <!-- BẢNG TÓM TẮT ĐƯỢC ĐƯA RA NGOÀI ĐỂ TO RÕ NHƯ BẢNG CHÍNH -->
+        <div class="table-wrapper" style="max-width: 1000px; margin: 0 auto 30px auto;">
+            <table class="main-table">
+                <tr>
+                    <th>Kích thước mẫu (Số hộ)</th>
+                    <th>Trung bình cộng mẫu</th>
+                    <th>Phương sai tổng thể</th>
+                    <th>Độ lệch chuẩn tổng thể</th>
+                </tr>
+                <tr>
+                    <td>100</td>
+                    <td>150 KW</td>
+                    <td>144</td>
+                    <td>Căn bậc hai của 144 = 12</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <h3>Bước 1: Phân Tích Dạng Bài & Tra Bảng</h3>
+                <p>Từ khóa "ít nhất" chứng tỏ đây là bài toán <span class="highlight-blue">Ước lượng 1 bên</span>.</p>
+                <p>Độ tin cậy của bài toán là 90%, do đó mức ý nghĩa sẽ là: 100% - 90% = 10% (Tương đương 0.1).</p>
+                <p>Đối với bài toán ước lượng 1 bên, ta tra bảng phân phối chuẩn Z mà <b>tuyệt đối không chia đôi</b> mức ý nghĩa 0.1:</p>
+                <div class="result-box highlight-yellow">Tra bảng ta được: Giá trị Z = 1.28</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 2: Tính Sai Số Ước Lượng</h3>
+                <p>Chúng ta áp dụng công thức tính sai số ước lượng (Ký hiệu là Epsilon):</p>
+                <div class="formula-box">
+                    Sai số = Giá trị tra bảng &times; (Độ lệch chuẩn / Căn bậc hai của Kích thước mẫu)
+                </div>
+                <p>Thay các số liệu từ bảng tóm tắt vào công thức:</p>
+                <p>Sai số = 1.28 &times; (12 / &radic;100)</p>
+                <p>Sai số = 1.28 &times; (12 / 10)</p>
+                <div class="result-box highlight-green">Sai số = 1.536</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 3: Tính Toán & Kết Luận</h3>
+                <p>Do đề bài yêu cầu tìm lượng điện sử dụng "ít nhất" (Tối thiểu), ta đi tính giá trị Cận Dưới:</p>
+                <div class="formula-box">
+                    Giá trị Cận Dưới = Trung bình cộng - Sai số
+                </div>
+                <p>Giá trị Cận Dưới = 150 - 1.536 = 148.464</p>
+                <div class="result-box highlight-red" style="font-size: 24px;">Kết quả: 148.464 KW</div>
+                <p style="font-size: 18px; color: #0f172a; margin-top: 20px; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Với độ tin cậy 90%, trung bình một hộ gia đình sử dụng ít nhất 148.464 KW điện trong tháng 6.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 4 - BÀI 2 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 4</span> Bài 2: Ước Lượng Khoảng 2 Bên (Độ Tuổi Công Nhân)</h2>
+        <p class="problem-desc">"Lấy mẫu ngẫu nhiên độ tuổi công nhân thu được kết quả: Dưới 20 tuổi (10 người), từ 20 đến 25 tuổi (15 người), từ 25 đến 30 tuổi (30 người), từ 30 đến 35 tuổi (6 người). Hãy <b>ước lượng khoảng</b> cho độ tuổi trung bình của công nhân với độ tin cậy 95%."</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-table-cells"></i> BƯỚC BẮT BUỘC: LẬP BẢNG TÍNH TOÁN VÀO BÀI LÀM. Vì đề bài cho dữ liệu theo nhóm (phân tổ), ta phải lập bảng 5 cột để tìm ra Trung bình cộng và Độ lệch chuẩn mẫu. Cột Giá Trị Đại Diện bằng trung bình cộng của 2 đầu mút khoảng tuổi.</p>
+        
+        <div class="table-wrapper">
+            <table class="main-table">
+                <tr>
+                    <th>Khoảng Độ Tuổi</th>
+                    <th>Giá Trị Đại Diện (Cột 1)</th>
+                    <th>Số Công Nhân (Cột 2)</th>
+                    <th>Tích Số (Cột 1 &times; Cột 2)</th>
+                    <th>Bình Phương &times; Số Công Nhân (Cột 1&sup2; &times; Cột 2)</th>
+                </tr>
+                <tr><td>Dưới 20 tuổi</td><td>17.5</td><td>10</td><td>175.0</td><td>17.5&sup2; &times; 10 = 3062.50</td></tr>
+                <tr><td>Từ 20 - 25 tuổi</td><td>22.5</td><td>15</td><td>337.5</td><td>22.5&sup2; &times; 15 = 7593.75</td></tr>
+                <tr><td>Từ 25 - 30 tuổi</td><td>27.5</td><td>30</td><td>825.0</td><td>27.5&sup2; &times; 30 = 22687.50</td></tr>
+                <tr><td>Từ 30 - 35 tuổi</td><td>32.5</td><td>6</td><td>195.0</td><td>32.5&sup2; &times; 6 = 6337.50</td></tr>
+                <tr class="total-row">
+                    <td colspan="2">TỔNG CỘNG ĐỂ TÍNH TOÁN</td>
+                    <td>Kích thước mẫu = 61</td>
+                    <td>Tổng = 1532.5</td>
+                    <td>Tổng = 39681.25</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-gears"></i></div>
+                <h3>Bước 1: Tính Các Đặc Trưng Mẫu</h3>
+                <p>Từ bảng tính toán chi tiết trên, ta áp dụng công thức để tính:</p>
+                <p><b>Trung bình cộng mẫu:</b><br> Tổng Tích Số / Kích thước mẫu = 1532.5 / 61 = 25.123 tuổi</p>
+                <p><b>Phương sai mẫu:</b><br> [Tổng Bình Phương - Kích thước mẫu &times; (Trung bình cộng)&sup2;] / (Kích thước mẫu - 1) <br> = [39681.25 - 61 &times; (25.123)&sup2;] / 60 = 19.69</p>
+                <p><b>Độ lệch chuẩn mẫu:</b><br> Căn bậc hai của Phương sai = &radic;19.69 = 4.437</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <h3>Bước 2: Phân Tích Dạng & Tra Bảng</h3>
+                <p>Yêu cầu đề bài là "Ước lượng khoảng", nghĩa là ta phải đi tìm cả giá trị lớn nhất và giá trị nhỏ nhất &rarr; Đây là bài toán <span class="highlight-blue">Ước lượng 2 bên</span>.</p>
+                <p>Độ tin cậy là 95% &rarr; Mức ý nghĩa bằng 5% (tức là 0.05).</p>
+                <p>Do đây là bài toán ước lượng 2 bên, ta <b>bắt buộc phải chia đôi</b> mức ý nghĩa để tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Tra bảng: Giá trị Z = 1.96</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 3: Tính Sai Số Ước Lượng</h3>
+                <p>Chúng ta áp dụng công thức tính sai số:</p>
+                <div class="formula-box">
+                    Sai số = Giá trị tra bảng &times; (Độ lệch chuẩn / Căn bậc hai của Kích thước mẫu)
+                </div>
+                <p>Thay các kết quả vừa tính vào công thức:</p>
+                <p>Sai số = 1.96 &times; (4.437 / &radic;61)</p>
+                <div class="result-box highlight-green">Sai số = 1.114</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: Tính Toán & Kết Luận</h3>
+                <p>Tìm Cận dưới và Cận trên của khoảng tin cậy:</p>
+                <p>Giá trị Cận dưới = Trung bình cộng - Sai số <br> = 25.123 - 1.114 = <span class="highlight-yellow">24.009</span></p>
+                <p>Giá trị Cận trên = Trung bình cộng + Sai số <br> = 25.123 + 1.114 = <span class="highlight-yellow">26.237</span></p>
+                <div class="result-box highlight-blue" style="font-size: 24px;">Khoảng độ tuổi: (24.01 ; 26.24)</div>
+                <p style="font-size: 18px; color: #0f172a; margin-top: 15px; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Với độ tin cậy 95%, độ tuổi trung bình của công nhân nằm trong khoảng từ 24.01 tuổi đến 26.24 tuổi.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 4 - BÀI 3 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 4</span> Bài 3: Ước Lượng Khoảng 2 Bên (Điểm Sinh Viên Kế Toán)</h2>
+        <p class="problem-desc">"Khảo sát điểm trung bình của sinh viên ngành Kế toán thu được số liệu phân theo 10 tổ. Hãy <b>ước lượng khoảng</b> cho điểm trung bình của toàn bộ sinh viên ngành Kế toán với độ tin cậy 90%."</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-table-cells"></i> BƯỚC BẮT BUỘC: LẬP BẢNG TÍNH TOÁN. Dữ liệu chia thành nhiều khoảng điểm, lập bảng 5 cột là cách duy nhất để tính chính xác mà không bị trừ điểm thi.</p>
+        <div class="table-wrapper">
+            <table class="main-table">
+                <tr>
+                    <th>Khoảng Điểm</th>
+                    <th>Giá Trị Đại Diện (Cột 1)</th>
+                    <th>Số Sinh Viên (Cột 2)</th>
+                    <th>Tích Số (Cột 1 &times; Cột 2)</th>
+                    <th>Bình Phương &times; Số Sinh Viên (Cột 1&sup2; &times; Cột 2)</th>
+                </tr>
+                <tr><td>Từ 5.0 đến dưới 5.4</td><td>5.2</td><td>20</td><td>104.0</td><td>5.2&sup2; &times; 20 = 540.80</td></tr>
+                <tr><td>Từ 5.4 đến dưới 5.8</td><td>5.6</td><td>20</td><td>112.0</td><td>5.6&sup2; &times; 20 = 627.20</td></tr>
+                <tr><td>Từ 5.8 đến dưới 6.2</td><td>6.0</td><td>30</td><td>180.0</td><td>6.0&sup2; &times; 30 = 1080.00</td></tr>
+                <tr><td>Từ 6.2 đến dưới 6.6</td><td>6.4</td><td>30</td><td>192.0</td><td>6.4&sup2; &times; 30 = 1228.80</td></tr>
+                <tr><td>Từ 6.6 đến dưới 7.0</td><td>6.8</td><td>40</td><td>272.0</td><td>6.8&sup2; &times; 40 = 1849.60</td></tr>
+                <tr><td>Từ 7.0 đến dưới 7.4</td><td>7.2</td><td>50</td><td>360.0</td><td>7.2&sup2; &times; 50 = 2592.00</td></tr>
+                <tr><td>Từ 7.4 đến dưới 7.8</td><td>7.6</td><td>40</td><td>304.0</td><td>7.6&sup2; &times; 40 = 2310.40</td></tr>
+                <tr><td>Từ 7.8 đến dưới 8.2</td><td>8.0</td><td>30</td><td>240.0</td><td>8.0&sup2; &times; 30 = 1920.00</td></tr>
+                <tr><td>Từ 8.2 đến dưới 8.6</td><td>8.4</td><td>20</td><td>168.0</td><td>8.4&sup2; &times; 20 = 1411.20</td></tr>
+                <tr><td>Từ 8.6 đến dưới 9.0</td><td>8.8</td><td>10</td><td>88.0</td><td>8.8&sup2; &times; 10 = 774.40</td></tr>
+                <tr class="total-row">
+                    <td colspan="2">TỔNG CỘNG ĐỂ TÍNH TOÁN</td>
+                    <td>Kích thước mẫu = 290</td>
+                    <td>Tổng = 2020.0</td>
+                    <td>Tổng = 14334.40</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-gears"></i></div>
+                <h3>Bước 1: Tính Các Đặc Trưng Mẫu</h3>
+                <p>Từ bảng tổng cộng phía trên, ta tính lần lượt:</p>
+                <p><b>Trung bình cộng mẫu:</b><br> Tổng Tích Số / Kích thước mẫu = 2020.0 / 290 = 6.966 điểm</p>
+                <p><b>Phương sai mẫu:</b><br> [Tổng Bình Phương - Kích thước mẫu &times; (Trung bình cộng)&sup2;] / (Kích thước mẫu - 1) <br> = [14334.40 - 290 &times; (6.966)&sup2;] / 289 = 0.911</p>
+                <p><b>Độ lệch chuẩn mẫu:</b><br> Căn bậc hai của Phương sai = &radic;0.911 = 0.954</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <h3>Bước 2: Phân Tích Dạng & Tra Bảng</h3>
+                <p>Yêu cầu đề bài là "Ước lượng khoảng" &rarr; Bài toán <span class="highlight-blue">Ước lượng 2 bên</span>.</p>
+                <p>Độ tin cậy là 90% &rarr; Mức ý nghĩa bằng 10% (tức là 0.1).</p>
+                <p>Do đây là bài toán 2 bên, ta <b>bắt buộc phải chia đôi</b> mức ý nghĩa để tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Tra bảng: Giá trị Z = 1.65</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 3: Tính Sai Số Ước Lượng</h3>
+                <p>Chúng ta áp dụng công thức tính sai số:</p>
+                <div class="formula-box">
+                    Sai số = Giá trị tra bảng &times; (Độ lệch chuẩn / Căn bậc hai của Kích thước mẫu)
+                </div>
+                <p>Thay các con số vào công thức:</p>
+                <p>Sai số = 1.65 &times; (0.954 / &radic;290)</p>
+                <div class="result-box highlight-green">Sai số = 0.092</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: Tính Toán & Kết Luận</h3>
+                <p>Tìm Cận dưới và Cận trên của điểm trung bình:</p>
+                <p>Điểm thấp nhất = Trung bình cộng - Sai số <br> = 6.966 - 0.092 = <span class="highlight-yellow">6.874</span></p>
+                <p>Điểm cao nhất = Trung bình cộng + Sai số <br> = 6.966 + 0.092 = <span class="highlight-yellow">7.058</span></p>
+                <div class="result-box highlight-blue" style="font-size: 24px;">Khoảng điểm: (6.87 ; 7.06)</div>
+                <p style="font-size: 18px; color: #0f172a; margin-top: 15px; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Với độ tin cậy 90%, điểm trung bình của toàn bộ sinh viên ngành Kế toán nằm trong khoảng từ 6.87 điểm đến 7.06 điểm.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- CHƯƠNG 5: KIỂM ĐỊNH GIẢ THUYẾT -->
+    <!-- ========================================== -->
+    <div class="section-header">Chương 5: Kiểm Định Giả Thuyết</div>
+
+    <!-- CHƯƠNG 5 - BÀI 1 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 5</span> Bài 1: Kiểm Định Trung Bình Tổng Thể (Dạng Bảng - 2 Bên)</h2>
+        <p class="problem-desc">"Đo chiều cao của 45 nữ sinh viên ngành sư phạm có kết quả: Dưới 150cm (5 người), từ 150-155cm (20 người), từ 155-160cm (15 người), từ 160-165cm (5 người). Với độ tin cậy 90%, hãy kiểm định giả thuyết cho rằng chiều cao trung bình của nữ sinh sư phạm <b>là 155 cm</b>."</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-table-cells"></i> BƯỚC BẮT BUỘC: LẬP BẢNG TÍNH TOÁN. Kẻ bảng 5 cột sau vào bài thi để xác định Trung bình cộng và Độ lệch chuẩn trước khi đặt giả thuyết kiểm định.</p>
+        
+        <div class="table-wrapper">
+            <table class="main-table">
+                <tr>
+                    <th>Khoảng Chiều Cao (cm)</th>
+                    <th>Giá Trị Đại Diện (Cột 1)</th>
+                    <th>Số Nữ Sinh (Cột 2)</th>
+                    <th>Tích Số (Cột 1 &times; Cột 2)</th>
+                    <th>Bình Phương &times; Số Nữ Sinh (Cột 1&sup2; &times; Cột 2)</th>
+                </tr>
+                <tr><td>Dưới 150 cm</td><td>147.5</td><td>5</td><td>737.5</td><td>147.5&sup2; &times; 5 = 108781.25</td></tr>
+                <tr><td>Từ 150 - 155 cm</td><td>152.5</td><td>20</td><td>3050.0</td><td>152.5&sup2; &times; 20 = 465125.00</td></tr>
+                <tr><td>Từ 155 - 160 cm</td><td>157.5</td><td>15</td><td>2362.5</td><td>157.5&sup2; &times; 15 = 372093.75</td></tr>
+                <tr><td>Từ 160 - 165 cm</td><td>162.5</td><td>5</td><td>812.5</td><td>162.5&sup2; &times; 5 = 132031.25</td></tr>
+                <tr class="total-row">
+                    <td colspan="2">TỔNG CỘNG ĐỂ TÍNH TOÁN</td>
+                    <td>Kích thước mẫu = 45</td>
+                    <td>Tổng = 6962.5</td>
+                    <td>Tổng = 1078031.25</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Bước 1: Tính Toán & Đặt Giả Thuyết</h3>
+                <p>Từ bảng tính toán ta có:</p>
+                <p><b>Trung bình cộng mẫu:</b> 6962.5 / 45 = 154.722 cm</p>
+                <p><b>Độ lệch chuẩn mẫu:</b> Căn bậc hai của {[1078031.25 - 45 &times; (154.722)&sup2;]/44} = 4.208 cm</p>
+                <p>Câu hỏi đề bài là "chiều cao là 155cm" chứng tỏ đây là <span class="highlight-blue">Kiểm định 2 Bên</span> (Dạng bằng hoặc khác).</p>
+                <p class="highlight-yellow">Giả thuyết Ban đầu (H0): Chiều cao trung bình = 155</p>
+                <p class="highlight-yellow">Giả thuyết Đối (H1): Chiều cao trung bình &ne; 155</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 2: Tính Giá Trị Kiểm Định</h3>
+                <p>Công thức tính toán Giá trị kiểm định:</p>
+                <div class="formula-box">
+                    Giá trị kiểm định = [(Trung bình cộng mẫu - Trung bình lý thuyết) / Độ lệch chuẩn mẫu] &times; Căn bậc hai của Kích thước mẫu
+                </div>
+                <p>Thay các số liệu vào công thức trên:</p>
+                <p>Giá trị kiểm định = [(154.722 - 155) / 4.208] &times; &radic;45</p>
+                <div class="result-box highlight-green">Giá trị kiểm định = -0.442</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-table"></i></div>
+                <h3>Bước 3: Tra Bảng Phân Phối</h3>
+                <table class="summary-table">
+                    <tr><th>Độ tin cậy của bài toán</th><td>90%</td></tr>
+                    <tr><th>Mức ý nghĩa tương ứng</th><td>10% (Tức là 0.1)</td></tr>
+                    <tr><th>Loại bài toán kiểm định</th><td>Kiểm định 2 Bên (&ne;)</td></tr>
+                </table>
+                <p>Do đây là bài toán kiểm định 2 bên, ta <b>bắt buộc phải chia đôi</b> mức ý nghĩa để tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Giá trị tra bảng = 1.65</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: So Sánh & Đưa Ra Kết Luận</h3>
+                <p>Quy tắc ra quyết định: Ta sẽ Bác bỏ Giả thuyết Ban đầu (H0) nếu giá trị tuyệt đối của Giá trị kiểm định lớn hơn Giá trị tra bảng (1.65).</p>
+                <p>Ta thực hiện so sánh:</p>
+                <p class="highlight-red" style="font-size: 20px;">|-0.442| &lt; 1.65</p>
+                <p style="font-weight: 800; color: #16a34a; font-size: 22px; text-align: center; margin: 15px 0;">&rarr; CHƯA ĐỦ CƠ SỞ để Bác bỏ Giả thuyết H0.</p>
+                <p style="font-size: 18px; color: #0f172a; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Ta chấp nhận giả thuyết ban đầu. Có thể khẳng định rằng chiều cao trung bình của nữ sinh sư phạm đúng là 155cm.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 5 - BÀI 2 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 5</span> Bài 2: Kiểm Định Tỷ Lệ (2 Bên - Có đáng tin không?)</h2>
+        <p class="problem-desc">"Một dây chuyền sản xuất được quảng cáo là có tỷ lệ sản phẩm lỗi là 1%. Một công ty chọn ngẫu nhiên 300 sản phẩm thì phát hiện ra có 5 sản phẩm bị lỗi. Với độ tin cậy 95%, lời quảng cáo của công ty này <b>có đáng tin cậy hay không</b>?"</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-triangle-exclamation"></i> GHI CHÚ QUAN TRỌNG: Các bài toán Kiểm định Tỷ Lệ (Bài 2, Bài 3, Bài 4) chỉ có các số liệu đếm được tổng hợp, hoàn toàn KHÔNG CÓ số liệu phân theo tổ. Vì vậy, ta KHÔNG THỂ VÀ KHÔNG CẦN LẬP BẢNG TÍNH TOÁN, mà chỉ cần lập Bảng Tóm Tắt Dữ Liệu như dưới đây.</p>
+
+        <!-- BẢNG TÓM TẮT ĐƯỢC ĐƯA RA NGOÀI -->
+        <div class="table-wrapper" style="max-width: 1000px; margin: 0 auto 30px auto;">
+            <table class="main-table">
+                <tr>
+                    <th>Kích thước mẫu</th>
+                    <th>Số lượng sản phẩm bị lỗi</th>
+                    <th>Tỷ lệ lỗi thực tế thu thập được</th>
+                    <th>Tỷ lệ lỗi theo lời quảng cáo</th>
+                </tr>
+                <tr>
+                    <td>300 sản phẩm</td>
+                    <td>5 sản phẩm</td>
+                    <td>5 / 300 = 0.0167</td>
+                    <td>1% = 0.01</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-list"></i></div>
+                <h3>Bước 1: Phân Tích & Đặt Giả Thuyết</h3>
+                <p>Câu hỏi của bài là "có đáng tin không", điều này đồng nghĩa với việc ta phải kiểm tra xem tỷ lệ lỗi thực tế có ĐÚNG BẰNG 1% như lời quảng cáo hay không &rarr; Đây là dạng bài <span class="highlight-blue">Kiểm định 2 Bên</span>.</p>
+                <p class="highlight-yellow">Giả thuyết Ban đầu (H0): Tỷ lệ sản phẩm lỗi = 0.01</p>
+                <p class="highlight-yellow">Giả thuyết Đối (H1): Tỷ lệ sản phẩm lỗi &ne; 0.01</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 2: Tính Giá Trị Kiểm Định</h3>
+                <p>Chúng ta áp dụng công thức tính Giá trị kiểm định cho tỷ lệ:</p>
+                <div class="formula-box">
+                    Giá trị kiểm định = (Tỷ lệ thực tế - Tỷ lệ quảng cáo) / Căn bậc hai của [(Tỷ lệ quảng cáo &times; (1 - Tỷ lệ quảng cáo)) / Kích thước mẫu]
+                </div>
+                <p>Thay các con số vào công thức:</p>
+                <p>Giá trị kiểm định = (0.0167 - 0.01) / &radic;[(0.01 &times; 0.99) / 300]</p>
+                <div class="result-box highlight-green">Giá trị kiểm định = 1.167</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-table"></i></div>
+                <h3>Bước 3: Tra Bảng Phân Phối</h3>
+                <table class="summary-table">
+                    <tr><th>Độ tin cậy của bài toán</th><td>95%</td></tr>
+                    <tr><th>Mức ý nghĩa tương ứng</th><td>5% (Tức là 0.05)</td></tr>
+                    <tr><th>Loại bài toán kiểm định</th><td>Kiểm định 2 Bên</td></tr>
+                </table>
+                <p>Do đây là bài toán kiểm định 2 bên, ta bắt buộc phải <b>chia đôi</b> mức ý nghĩa để tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Giá trị tra bảng = 1.96</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: So Sánh & Đưa Ra Kết Luận</h3>
+                <p>Quy tắc ra quyết định: Ta sẽ Bác bỏ Giả thuyết Ban đầu (H0) nếu giá trị tuyệt đối của Giá trị kiểm định lớn hơn Giá trị tra bảng.</p>
+                <p>Ta tiến hành so sánh:</p>
+                <p class="highlight-red" style="font-size: 20px;">|1.167| &lt; 1.96</p>
+                <p style="font-weight: 800; color: #16a34a; font-size: 22px; text-align: center; margin: 15px 0;">&rarr; CHƯA ĐỦ CƠ SỞ để Bác bỏ Giả thuyết H0.</p>
+                <p style="font-size: 18px; color: #0f172a; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Ta chấp nhận Giả thuyết H0. Nghĩa là lời quảng cáo của công ty về tỷ lệ lỗi 1% là hoàn toàn đáng tin cậy.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 5 - BÀI 3 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 5</span> Bài 3: Kiểm Định Tỷ Lệ (1 Bên Phải - Tăng)</h2>
+        <p class="problem-desc">"Một máy sản xuất tự động, lúc đầu tỷ lệ sản phẩm loại A là 45%. Sau khi áp dụng một phương pháp sản xuất mới, người ta lấy ra 400 sản phẩm để kiểm tra, thấy có 215 sản phẩm loại A. Với mức ý nghĩa 5%, hãy kết luận xem phương pháp sản xuất mới có thực sự <b>làm tăng</b> tỷ lệ sản phẩm loại A lên hay không?"</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-triangle-exclamation"></i> GHI CHÚ: Tương tự như bài trước, đây là bài toán Kiểm định Tỷ Lệ nên KHÔNG LẬP BẢNG TÍNH TOÁN phân tổ. Ta sử dụng Bảng Tóm Tắt Dữ Liệu.</p>
+
+        <!-- BẢNG TÓM TẮT ĐƯỢC ĐƯA RA NGOÀI -->
+        <div class="table-wrapper" style="max-width: 1000px; margin: 0 auto 30px auto;">
+            <table class="main-table">
+                <tr>
+                    <th>Kích thước mẫu lấy ra kiểm tra</th>
+                    <th>Số lượng sản phẩm loại A đạt được</th>
+                    <th>Tỷ lệ sản phẩm loại A thực tế</th>
+                    <th>Tỷ lệ sản phẩm loại A lúc ban đầu</th>
+                </tr>
+                <tr>
+                    <td>400 sản phẩm</td>
+                    <td>215 sản phẩm</td>
+                    <td>215 / 400 = 0.5375</td>
+                    <td>45% = 0.45</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-list"></i></div>
+                <h3>Bước 1: Phân Tích & Đặt Giả Thuyết</h3>
+                <p>Từ khóa của câu hỏi là "làm tăng", điều này chứng tỏ rõ ràng đây là bài toán <span class="highlight-blue">Kiểm định 1 Bên Phải</span>.</p>
+                <p class="highlight-yellow">Giả thuyết Ban đầu (H0): Tỷ lệ sản phẩm loại A mới &le; 0.45 (Không tăng)</p>
+                <p class="highlight-yellow">Giả thuyết Đối (H1): Tỷ lệ sản phẩm loại A mới &gt; 0.45 (Thực sự làm tăng)</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 2: Tính Giá Trị Kiểm Định</h3>
+                <p>Chúng ta áp dụng công thức tính cho kiểm định tỷ lệ:</p>
+                <div class="formula-box">
+                    Giá trị kiểm định = (Tỷ lệ thực tế - Tỷ lệ lúc ban đầu) / Căn bậc hai của [(Tỷ lệ lúc ban đầu &times; (1 - Tỷ lệ lúc ban đầu)) / Kích thước mẫu]
+                </div>
+                <p>Thay các số liệu từ bảng tóm tắt vào:</p>
+                <p>Giá trị kiểm định = (0.5375 - 0.45) / &radic;[(0.45 &times; 0.55) / 400]</p>
+                <div class="result-box highlight-green">Giá trị kiểm định = 3.518</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-table"></i></div>
+                <h3>Bước 3: Tra Bảng Phân Phối</h3>
+                <table class="summary-table">
+                    <tr><th>Mức ý nghĩa của bài toán</th><td>5% (Tức là 0.05)</td></tr>
+                    <tr><th>Loại bài toán kiểm định</th><td>Kiểm định 1 Bên Phải (&gt;)</td></tr>
+                </table>
+                <p>Vì đây là bài toán kiểm định 1 bên, chúng ta <b>tuyệt đối không chia đôi</b> mức ý nghĩa. Tiến hành tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Giá trị tra bảng = 1.65</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: So Sánh & Đưa Ra Kết Luận</h3>
+                <p>Quy tắc ra quyết định cho kiểm định 1 bên phải: Ta sẽ Bác bỏ Giả thuyết Ban đầu (H0) nếu Giá trị kiểm định lớn hơn Giá trị tra bảng.</p>
+                <p>Ta tiến hành so sánh:</p>
+                <p class="highlight-green" style="font-size: 20px;">3.518 &gt; 1.65</p>
+                <p style="font-weight: 800; color: #e11d48; font-size: 22px; text-align: center; margin: 15px 0;">&rarr; ĐÃ ĐỦ CƠ SỞ để Bác bỏ Giả thuyết H0.</p>
+                <p style="font-size: 18px; color: #0f172a; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Chấp nhận Giả thuyết Đối (H1). Với mức ý nghĩa 5%, có thể khẳng định phương pháp sản xuất mới <b>đã thực sự làm tăng</b> tỷ lệ sản phẩm loại A.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 5 - BÀI 4 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 5</span> Bài 4: Kiểm Định Tỷ Lệ (1 Bên Trái - Giảm)</h2>
+        <p class="problem-desc">"Tỉ lệ phế phẩm của một nhà máy trước đây là 5%. Năm nay áp dụng một biện pháp kỹ thuật mới, người ta lấy một mẫu gồm 800 sản phẩm để kiểm tra thì thấy có 24 phế phẩm. Với mức ý nghĩa 10%, hãy kết luận xem biện pháp kỹ thuật mới này có thật sự <b>làm giảm</b> tỉ lệ phế phẩm của nhà máy hay không?"</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-triangle-exclamation"></i> GHI CHÚ: Bài toán tỷ lệ, ta chỉ lập Bảng Tóm Tắt Dữ Liệu thay vì Bảng Tính Toán phân tổ.</p>
+
+        <!-- BẢNG TÓM TẮT ĐƯỢC ĐƯA RA NGOÀI -->
+        <div class="table-wrapper" style="max-width: 1000px; margin: 0 auto 30px auto;">
+            <table class="main-table">
+                <tr>
+                    <th>Kích thước mẫu lấy ra kiểm tra</th>
+                    <th>Số lượng phế phẩm đếm được</th>
+                    <th>Tỷ lệ phế phẩm thực tế mẫu mới</th>
+                    <th>Tỷ lệ phế phẩm của nhà máy trước đây</th>
+                </tr>
+                <tr>
+                    <td>800 sản phẩm</td>
+                    <td>24 sản phẩm</td>
+                    <td>24 / 800 = 0.0300</td>
+                    <td>5% = 0.05</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-list"></i></div>
+                <h3>Bước 1: Phân Tích & Đặt Giả Thuyết</h3>
+                <p>Từ khóa của câu hỏi là "làm giảm", chứng tỏ đây chắc chắn là bài toán <span class="highlight-blue">Kiểm định 1 Bên Trái</span>.</p>
+                <p class="highlight-yellow">Giả thuyết Ban đầu (H0): Tỷ lệ phế phẩm mới &ge; 0.05 (Không giảm)</p>
+                <p class="highlight-yellow">Giả thuyết Đối (H1): Tỷ lệ phế phẩm mới &lt; 0.05 (Đã thực sự giảm)</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-calculator"></i></div>
+                <h3>Bước 2: Tính Giá Trị Kiểm Định</h3>
+                <p>Áp dụng công thức tính giá trị kiểm định cho tỷ lệ:</p>
+                <div class="formula-box">
+                    Giá trị kiểm định = (Tỷ lệ thực tế - Tỷ lệ trước đây) / Căn bậc hai của [(Tỷ lệ trước đây &times; (1 - Tỷ lệ trước đây)) / Kích thước mẫu]
+                </div>
+                <p>Thay số liệu vào công thức:</p>
+                <p>Giá trị kiểm định = (0.03 - 0.05) / &radic;[(0.05 &times; 0.95) / 800]</p>
+                <div class="result-box highlight-green">Giá trị kiểm định = -2.597</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-table"></i></div>
+                <h3>Bước 3: Tra Bảng Phân Phối</h3>
+                <table class="summary-table">
+                    <tr><th>Mức ý nghĩa của bài toán</th><td>10% (Tức là 0.10)</td></tr>
+                    <tr><th>Loại bài toán kiểm định</th><td>Kiểm định 1 Bên Trái (&lt;)</td></tr>
+                </table>
+                <p>Vì là bài toán 1 bên trái, ta <b>tuyệt đối không chia đôi</b> mức ý nghĩa và phải lấy <b>giá trị âm</b> khi tra bảng phân phối chuẩn:</p>
+                <div class="result-box highlight-yellow">Giá trị tra bảng = -1.28</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                <h3>Bước 4: So Sánh & Đưa Ra Kết Luận</h3>
+                <p>Quy tắc ra quyết định cho kiểm định 1 bên trái: Ta sẽ Bác bỏ Giả thuyết Ban đầu (H0) nếu Giá trị kiểm định nhỏ hơn giá trị âm tra bảng.</p>
+                <p>Ta tiến hành so sánh:</p>
+                <p class="highlight-green" style="font-size: 20px;">-2.597 &lt; -1.28</p>
+                <p style="font-weight: 800; color: #e11d48; font-size: 22px; text-align: center; margin: 15px 0;">&rarr; ĐÃ ĐỦ CƠ SỞ để Bác bỏ Giả thuyết H0.</p>
+                <p style="font-size: 18px; color: #0f172a; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Kết luận cuối cùng: Chấp nhận Giả thuyết Đối (H1). Với mức ý nghĩa 10%, có thể khẳng định biện pháp kỹ thuật mới <b>đã thật sự làm giảm</b> tỷ lệ phế phẩm của nhà máy.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CHƯƠNG 7: TƯƠNG QUAN & HỒI QUY -->
+    <!-- ========================================== -->
+    <div class="section-header">Chương 7: Tương Quan & Hồi Quy</div>
+
+    <!-- CHƯƠNG 7 - BÀI 1 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 7</span> Bài 1: Lập Phương Trình Hồi Quy (Chi Phí Theo Thu Nhập)</h2>
+        <p class="problem-desc">"Yêu cầu lập mô hình phương trình hồi quy tuyến tính thể hiện <b>Chi phí (biến Y) phụ thuộc vào Thu nhập (biến X)</b>. Dựa trên tập dữ liệu gồm 10 quan sát thực tế đã thu thập được."</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-table-cells"></i> BƯỚC BẮT BUỘC - PHẢI LẬP BẢNG TÍNH TOÁN HỒI QUY: Lập bảng 5 cột sau đây vào bài làm để tính tổng các giá trị cần thiết trước khi lắp vào công thức tìm Hệ số tự do a và Hệ số góc b.</p>
+        
+        <div class="table-wrapper">
+            <table class="main-table">
+                <tr>
+                    <th>Số Thứ Tự Quan Sát</th>
+                    <th>Thu Nhập <br>(Biến Độc Lập X)</th>
+                    <th>Chi Phí <br>(Biến Phụ Thuộc Y)</th>
+                    <th>Tích Số <br>(X &times; Y)</th>
+                    <th>Bình Phương của Thu Nhập <br>(X&sup2;)</th>
+                </tr>
+                <tr><td>1</td><td>5</td><td>3.6</td><td>18.0</td><td>25.00</td></tr>
+                <tr><td>2</td><td>8</td><td>3.0</td><td>24.0</td><td>64.00</td></tr>
+                <tr><td>3</td><td>5</td><td>3.5</td><td>17.5</td><td>25.00</td></tr>
+                <tr><td>4</td><td>5</td><td>4.5</td><td>22.5</td><td>25.00</td></tr>
+                <tr><td>5</td><td>3.5</td><td>2.0</td><td>7.0</td><td>12.25</td></tr>
+                <tr><td>6</td><td>3</td><td>2.0</td><td>6.0</td><td>9.00</td></tr>
+                <tr><td>7</td><td>15</td><td>0.7</td><td>10.5</td><td>225.00</td></tr>
+                <tr><td>8</td><td>5</td><td>2.5</td><td>12.5</td><td>25.00</td></tr>
+                <tr><td>9</td><td>2.5</td><td>2.0</td><td>5.0</td><td>6.25</td></tr>
+                <tr><td>10</td><td>2</td><td>2.0</td><td>4.0</td><td>4.00</td></tr>
+                <tr class="total-row">
+                    <td>TỔNG CỘNG ĐỂ TÍNH TOÁN</td>
+                    <td>Tổng X = 54</td>
+                    <td>Tổng Y = 25.8</td>
+                    <td>Tổng (X&times;Y) = 127</td>
+                    <td>Tổng X&sup2; = 420.5</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-database"></i></div>
+                <h3>Bước 1: Phân Tích & Thiết Lập Mô Hình</h3>
+                <p>Theo đề bài phân tích, ta xác định:</p>
+                <p>Biến Nguyên nhân (Biến Độc lập): Thu nhập (X)</p>
+                <p>Biến Kết quả (Biến Phụ thuộc): Chi phí (Y)</p>
+                <p>Phương trình Hồi quy tuyến tính có dạng tổng quát là:</p>
+                <div class="result-box highlight-yellow">Y = a + bX</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Bước 2: Tính Hệ Số Góc (Hệ số b)</h3>
+                <div class="formula-box" style="font-size: 15px;">
+                    Tử số = [Kích thước mẫu &times; Tổng(X&times;Y)] - [Tổng X &times; Tổng Y]<br><br>
+                    Mẫu số = [Kích thước mẫu &times; Tổng(X&sup2;)] - [Bình phương của (Tổng X)]<br><br>
+                    Hệ số b = Tử số / Mẫu số
+                </div>
+                <p>Tử số = 10 &times; 127 - 54 &times; 25.8 = -123.2</p>
+                <p>Mẫu số = 10 &times; 420.5 - (54 &times; 54) = 1289</p>
+                <div class="result-box highlight-green">Hệ số b = -0.0956</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-anchor"></i></div>
+                <h3>Bước 3: Tính Hệ Số Tự Do (Hệ số a)</h3>
+                <p>Sau khi có hệ số góc b, ta áp dụng công thức tính hệ số tự do a:</p>
+                <div class="formula-box">
+                    Hệ số a = (Tổng Y - Hệ số b &times; Tổng X) / Kích thước mẫu
+                </div>
+                <p>Thay kết quả vừa tính toán vào:</p>
+                <p>Hệ số a = (25.8 - (-0.0956) &times; 54) / 10</p>
+                <p>Hệ số a = (25.8 + 5.1624) / 10</p>
+                <div class="result-box highlight-blue">Hệ số a = 3.096</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                <h3>Bước 4: Kết Luận & Giải Thích Phương Trình</h3>
+                <p>Thay Hệ số a và Hệ số b vào phương trình tổng quát ở Bước 1 ta được:</p>
+                <p class="highlight-red" style="font-size: 28px; text-align: center; width: 100%; padding: 15px;">Y = 3.096 - 0.0956X</p>
+                <p style="font-size: 18px; color: #0f172a; margin-top: 20px; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Giải thích ý nghĩa mô hình: Do hệ số góc b mang giá trị âm (-0.0956), điều này chứng minh rằng Thu nhập và Chi phí có mối quan hệ <b>tỷ lệ nghịch</b>. Cụ thể, khi thu nhập của hộ gia đình tăng lên 1 đơn vị thì chi phí lại có xu hướng giảm đi 0.0956 đơn vị.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHƯƠNG 7 - BÀI 2 -->
+    <div class="slide-container">
+        <h2 class="slide-title"><span>Chương 7</span> Bài 2: Lập Phương Trình Hồi Quy (Điểm Sinh Theo Điểm Lý)</h2>
+        <p class="problem-desc">"Lập mô hình hồi quy để dự đoán <b>điểm thi môn Sinh (biến Y) phụ thuộc vào điểm thi môn Lý (biến X)</b>. Dựa trên dữ liệu khảo sát thực tế từ 15 sinh viên."</p>
+        
+        <p class="instruction-text"><i class="fa-solid fa-table-cells"></i> BƯỚC BẮT BUỘC - PHẢI LẬP BẢNG TÍNH TOÁN HỒI QUY: Kẻ bảng 5 cột sau đây vào bài làm để thu thập các tổng số liệu cần thiết tương tự như bài trên.</p>
+        
+        <div class="table-wrapper">
+            <table class="main-table">
+                <tr>
+                    <th>Số Thứ Tự Sinh Viên</th>
+                    <th>Điểm Thi Môn Lý <br>(Biến Độc Lập X)</th>
+                    <th>Điểm Thi Môn Sinh <br>(Biến Phụ Thuộc Y)</th>
+                    <th>Tích Số <br>(X &times; Y)</th>
+                    <th>Bình Phương của Điểm Lý <br>(X&sup2;)</th>
+                </tr>
+                <tr><td>1</td><td>7</td><td>7</td><td>49.0</td><td>49.00</td></tr>
+                <tr><td>2</td><td>7</td><td>6.5</td><td>45.5</td><td>49.00</td></tr>
+                <tr><td>3</td><td>6.5</td><td>6</td><td>39.0</td><td>42.25</td></tr>
+                <tr><td>4</td><td>6</td><td>8</td><td>48.0</td><td>36.00</td></tr>
+                <tr><td>5</td><td>7</td><td>5.8</td><td>40.6</td><td>49.00</td></tr>
+                <tr><td>6</td><td>5.8</td><td>8</td><td>46.4</td><td>33.64</td></tr>
+                <tr><td>7</td><td>5.3</td><td>5</td><td>26.5</td><td>28.09</td></tr>
+                <tr><td>8</td><td>6</td><td>6</td><td>36.0</td><td>36.00</td></tr>
+                <tr><td>9</td><td>6.3</td><td>7</td><td>44.1</td><td>39.69</td></tr>
+                <tr><td>10</td><td>6.5</td><td>5.3</td><td>34.45</td><td>42.25</td></tr>
+                <tr><td>11</td><td>6.8</td><td>6.5</td><td>44.2</td><td>46.24</td></tr>
+                <tr><td>12</td><td>6</td><td>7</td><td>42.0</td><td>36.00</td></tr>
+                <tr><td>13</td><td>6</td><td>6</td><td>36.0</td><td>36.00</td></tr>
+                <tr><td>14</td><td>7.3</td><td>7</td><td>51.1</td><td>53.29</td></tr>
+                <tr><td>15</td><td>5.6</td><td>5.5</td><td>30.8</td><td>31.36</td></tr>
+                <tr class="total-row">
+                    <td>TỔNG CỘNG ĐỂ TÍNH TOÁN</td>
+                    <td>Tổng X = 95.1</td>
+                    <td>Tổng Y = 96.6</td>
+                    <td>Tổng (X&times;Y) = 613.65</td>
+                    <td>Tổng X&sup2; = 607.81</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-database"></i></div>
+                <h3>Bước 1: Phân Tích & Thiết Lập Mô Hình</h3>
+                <p>Theo yêu cầu "Lập mô hình Điểm môn Sinh phụ thuộc vào Điểm môn Lý", ta xác định:</p>
+                <p>Biến Nguyên nhân (Biến Độc lập): Điểm thi môn Lý (X)</p>
+                <p>Biến Kết quả (Biến Phụ thuộc): Điểm thi môn Sinh (Y)</p>
+                <p>Phương trình Hồi quy tuyến tính có dạng tổng quát là:</p>
+                <div class="result-box highlight-yellow">Y = a + bX</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Bước 2: Tính Hệ Số Góc (Hệ số b)</h3>
+                <div class="formula-box" style="font-size: 15px;">
+                    Tử số = [Kích thước mẫu &times; Tổng(X&times;Y)] - [Tổng X &times; Tổng Y]<br><br>
+                    Mẫu số = [Kích thước mẫu &times; Tổng(X&sup2;)] - [Bình phương của (Tổng X)]<br><br>
+                    Hệ số b = Tử số / Mẫu số
+                </div>
+                <p>Tử số = 15 &times; 613.65 - 95.1 &times; 96.6 = 18.09</p>
+                <p>Mẫu số = 15 &times; 607.81 - (95.1 &times; 95.1) = 73.14</p>
+                <div class="result-box highlight-green">Hệ số b = 0.247</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-anchor"></i></div>
+                <h3>Bước 3: Tính Hệ Số Tự Do (Hệ số a)</h3>
+                <p>Sau khi có hệ số góc b, ta áp dụng công thức tính hệ số tự do a:</p>
+                <div class="formula-box">
+                    Hệ số a = (Tổng Y - Hệ số b &times; Tổng X) / Kích thước mẫu
+                </div>
+                <p>Thay các kết quả vừa tính vào công thức:</p>
+                <p>Hệ số a = (96.6 - 0.247 &times; 95.1) / 15</p>
+                <p>Hệ số a = (96.6 - 23.490) / 15</p>
+                <div class="result-box highlight-blue">Hệ số a = 4.874</div>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                <h3>Bước 4: Kết Luận & Giải Thích Phương Trình</h3>
+                <p>Thay Hệ số a và Hệ số b vào phương trình tổng quát ở Bước 1 ta được kết quả:</p>
+                <p class="highlight-red" style="font-size: 28px; text-align: center; width: 100%; padding: 15px;">Y = 4.874 + 0.247X</p>
+                <p style="font-size: 18px; color: #0f172a; margin-top: 20px; font-weight: 700; background: #f1f5f9; padding: 15px; border-radius: 8px;">Giải thích ý nghĩa mô hình: Khác với bài toán trên, ở đây Hệ số góc b mang giá trị dương (0.247). Điều này chỉ ra rằng Điểm môn Lý và Điểm môn Sinh có mối quan hệ <b>tỷ lệ thuận (đồng biến)</b>. Có nghĩa là, khi sinh viên cải thiện được 1 điểm môn Lý thì điểm môn Sinh của họ cũng có xu hướng tăng thêm khoảng 0.247 điểm.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
